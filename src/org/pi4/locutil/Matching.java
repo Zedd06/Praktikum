@@ -1,32 +1,66 @@
 package org.pi4.locutil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Matching {
 	
-	Map<int[], double[]> offlineTraces = new HashMap<int[], double[]>();
-	Map<int[], double[]> onlineTraces = new HashMap<int[], double[]>();
+	List<PositionTrace> offlineTraces;
+	List<PositionTrace> onlineTraces;
 	
-	public Matching(Map<int[], double[]> offlineTraces,Map<int[], double[]> onlineTraces){
+	
+	
+	
+	public Matching(List<PositionTrace> offlineTraces,List<PositionTrace> onlineTraces){
 		this.onlineTraces = onlineTraces;
 		this.offlineTraces = offlineTraces;
 	}
 	
 	public GeoPosition getNearest(){
-		for(Map.Entry<int[], double[]> e : offlineTraces.entrySet()){
-			  int[] position = e.getKey();
-			  double[] signal = e.getValue();
-			  
-			  for()
-			  
+		GeoPosition position = null;
+		double distance = 1000000.0;
+		
+		for(PositionTrace on: onlineTraces){
+			for(PositionTrace off: offlineTraces){
+				double d =getDistance(off.getPosition(),on.getPosition());
+				if(distance > d){
+					distance = d;
+					position = off.getPosition();
+				}
 			}
-		return position
+		}
+		return position;
 	}
 	
+	public double getDistance(GeoPosition off, GeoPosition on){
+		return Math.sqrt(Math.pow(on.getX()-off.getX(), 2)+Math.pow(on.getY()-off.getY(), 2)+Math.pow(on.getZ()-off.getZ(), 2));
+	}
+	
+	
 
+	
+	
+	@SuppressWarnings("null")
 	public GeoPosition getKNearest(int k){
+		//GeoPosition position = null;
+		double distance[] = null;
+		HashMap<Double,GeoPosition>  map= new HashMap<Double,GeoPosition>();
+		List<GeoPosition> list= null;
 		
+		
+		for(PositionTrace on: onlineTraces){
+			for(PositionTrace off: offlineTraces){
+				distance[offlineTraces.indexOf(off)] = getDistance(off.getPosition(),on.getPosition());
+				map.put(distance[offlineTraces.indexOf(off)], off.getPosition());
+				}
+				distance = Statistics.sort(distance);
+		}
+		for(int i=0;i<k;i++){
+			list.add(map.get(distance[i]));
+		}
+		//position = Statistics.avg(list,1);
+		return Statistics.avg(list,1);
 	}
 	
 

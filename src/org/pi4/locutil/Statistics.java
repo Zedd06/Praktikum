@@ -379,7 +379,7 @@ public class Statistics {
      * @param values  an array of <code>double</code> that shall be sorted
      * @return  a sorted array of <code>double</code>
      */
-    private static double[] sort(double[] values) {
+    public static double[] sort(double[] values) {
         int i, j;
         int n = values.length;
         double[] a = new double[n];
