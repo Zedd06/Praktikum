@@ -2,7 +2,8 @@ package org.pi4.locutil;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Vector;
+
 
 public class Matching {
 	
@@ -17,24 +18,42 @@ public class Matching {
 		this.offlineTraces = offlineTraces;
 	}
 	
-	public GeoPosition getNearest(){
-		GeoPosition position = null;
+	public GeoPosition[] getNearest(){
+		GeoPosition position[] = null;
 		double distance = 1000000.0;
 		
 		for(PositionTrace on: onlineTraces){
 			for(PositionTrace off: offlineTraces){
-				double d =getDistance(off.getPosition(),on.getPosition());
+				double d =getDistance(off.getSignals(),on.getSignals());
 				if(distance > d){
 					distance = d;
-					position = off.getPosition();
+					position[onlineTraces.indexOf(on)] = off.getPosition();
 				}
 			}
 		}
 		return position;
 	}
 	
-	public double getDistance(GeoPosition off, GeoPosition on){
-		return Math.sqrt(Math.pow(on.getX()-off.getX(), 2)+Math.pow(on.getY()-off.getY(), 2)+Math.pow(on.getZ()-off.getZ(), 2));
+	
+	
+	public void schreibeDatei(){
+		GeoPosition[] berechnet = getNearest();
+		for(PositionTrace on: onlineTraces){
+			System.out.println(on.getPosition().toString() +" "+berechnet[onlineTraces.indexOf(on)].toString());
+		}
+	}
+	
+	
+	
+	public double getDistance(double[] signalOf, double[] signalOn){
+		double a=0;
+		
+		for(int i=0;i<11;i++){
+			if(signalOf[i] !=0 && signalOn[i]!=0)
+				a +=Math.pow(signalOn[i]-signalOf[i], 2);
+				
+		}
+		return Math.sqrt(a);
 	}
 	
 	
@@ -51,7 +70,7 @@ public class Matching {
 		
 		for(PositionTrace on: onlineTraces){
 			for(PositionTrace off: offlineTraces){
-				distance[offlineTraces.indexOf(off)] = getDistance(off.getPosition(),on.getPosition());
+				distance[offlineTraces.indexOf(off)] = getDistance(off.getSignals(),on.getSignals());
 				map.put(distance[offlineTraces.indexOf(off)], off.getPosition());
 				}
 				distance = Statistics.sort(distance);
