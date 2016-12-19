@@ -1,5 +1,8 @@
 package org.pi4.locutil;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -36,11 +39,14 @@ public class Matching {
 	
 	
 	
-	public void schreibeDatei(){
+	public void schreibeDatei(String dateiname) throws IOException{
 		GeoPosition[] berechnet = getNearest();
-		for(PositionTrace on: onlineTraces){
-			System.out.println(on.getPosition().toString() +" "+berechnet[onlineTraces.indexOf(on)].toString());
+		FileWriter fw = new FileWriter(dateiname);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    for(PositionTrace on: onlineTraces){
+			bw.write(on.getPosition().toString() +" "+berechnet[onlineTraces.indexOf(on)].toString());
 		}
+		bw.close();
 	}
 	
 	
