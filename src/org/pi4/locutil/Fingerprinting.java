@@ -88,6 +88,7 @@ public class Fingerprinting {
 			for(int i=0;i<data.size();i++){
 				if(data.get(i).getPosition().equals(entry.getGeoPosition())){
 					data.set(i, addSignals(data.get(i), entry.getSignalStrengthSamples()));
+					entrySet=true;
 				}
 			}
 			if(!entrySet){
