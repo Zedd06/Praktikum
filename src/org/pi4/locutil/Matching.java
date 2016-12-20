@@ -22,7 +22,7 @@ public class Matching {
 	}
 	
 	public GeoPosition[] getNearest(){
-		GeoPosition position[] = null;
+		GeoPosition position[] = new GeoPosition[onlineTraces.size()];
 		double distance = 1000000.0;
 		
 		for(PositionTrace on: onlineTraces){
@@ -33,20 +33,22 @@ public class Matching {
 					position[onlineTraces.indexOf(on)] = off.getPosition();
 				}
 			}
+			distance = 1000000.0;
 		}
 		return position;
 	}
 	
 	
 	
-	public void schreibeDatei(String dateiname) throws IOException{
-		GeoPosition[] berechnet = getNearest();
+	public void schreibeDatei(String dateiname, GeoPosition[] berechnet) throws IOException{
+		//GeoPosition[] berechnet = getNearest();
 		FileWriter fw = new FileWriter(dateiname);
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    for(PositionTrace on: onlineTraces){
-			bw.write(on.getPosition().toString() +" "+berechnet[onlineTraces.indexOf(on)].toString());
+			bw.write(on.getPosition().toString() +" "+berechnet[onlineTraces.indexOf(on)].toString()+"\n");
 		}
 		bw.close();
+		System.out.println("Datei " + "\"" + dateiname + "\" erfolgreich erstellt!");
 	}
 	
 	
@@ -78,8 +80,8 @@ public class Matching {
 			for(PositionTrace off: offlineTraces){
 				distance[offlineTraces.indexOf(off)] = getDistance(off.getSignals(),on.getSignals());
 				map.put(distance[offlineTraces.indexOf(off)], off.getPosition());
-				}
-				distance = Statistics.sort(distance);
+			}
+			distance = Statistics.sort(distance);
 		}
 		for(int i=0;i<k;i++){
 			list.add(map.get(distance[i]));

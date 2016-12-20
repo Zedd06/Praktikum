@@ -23,7 +23,9 @@ public class PositionTrace {
 	public void setSignals(double[] signals) {
 		this.signals = signals;
 	}
-	
+	public void setSignal(double signal, int index){
+		signals[index] = signal;
+	}
 	
 	
 }
