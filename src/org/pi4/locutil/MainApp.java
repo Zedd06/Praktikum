@@ -20,15 +20,15 @@ public class MainApp {
 		
 		//Matching
 		Matching match = new Matching(offline, online);
-		int k = 3; //define influencing nearest neighbor
+		int k = 5; //define influencing nearest neighbor
 		String output = "output.txt"; //define name for output-file
 		
 		try {
 			//nearest neighbor matching
-			match.schreibeDatei(output,match.getNearest());
+			//match.schreibeDatei(output,match.getNearest());
 		
 			//k-nearest neighbor matching
-			//match.schreibeDatei(output,match.getKNearest(k));
+			match.schreibeDatei(output,match.getKNearest(k));
 			
 		} catch (IOException e) {
 			e.printStackTrace();

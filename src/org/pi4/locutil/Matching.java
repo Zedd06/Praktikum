@@ -3,6 +3,7 @@ package org.pi4.locutil;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -62,33 +63,31 @@ public class Matching {
 				
 		}
 		return Math.sqrt(a);
-	}
-	
-	
-
-	
-	
+	}	
 	@SuppressWarnings("null")
-	public GeoPosition getKNearest(int k){
+	public GeoPosition[] getKNearest(int k){
 		//GeoPosition position = null;
-		double distance[] = null;
+		double distance[] = new double[offlineTraces.size()];
 		HashMap<Double,GeoPosition>  map= new HashMap<Double,GeoPosition>();
-		List<GeoPosition> list= null;
+		List<GeoPosition> list= new ArrayList<GeoPosition>();
+		GeoPosition[] ausgabe = new GeoPosition[onlineTraces.size()];
+		
 		
 		
 		for(PositionTrace on: onlineTraces){
+			list.clear();;
 			for(PositionTrace off: offlineTraces){
 				distance[offlineTraces.indexOf(off)] = getDistance(off.getSignals(),on.getSignals());
 				map.put(distance[offlineTraces.indexOf(off)], off.getPosition());
 			}
 			distance = Statistics.sort(distance);
+			for(int i=0;i<k;i++){
+				list.add(map.get(distance[i]));
+			}
+			ausgabe[onlineTraces.indexOf(on)]=Statistics.avg(list,1);
 		}
-		for(int i=0;i<k;i++){
-			list.add(map.get(distance[i]));
-		}
+		
 		//position = Statistics.avg(list,1);
-		return Statistics.avg(list,1);
+		return ausgabe;
 	}
-	
-
 }
