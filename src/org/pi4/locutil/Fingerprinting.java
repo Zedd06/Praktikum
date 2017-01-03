@@ -3,7 +3,6 @@ package org.pi4.locutil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.pi4.locutil.io.TraceGenerator;
@@ -15,6 +14,7 @@ public class Fingerprinting {
 
 	private List<TraceEntry> offlineTrace;
 	private List<TraceEntry> onlineTrace;
+	private List<TraceEntry> apTraces;
 	private static final int offlineSize = 25;
 	private static final int onlineSize = 5;
 	private static final double signalStrength = -80.0;
@@ -30,6 +30,18 @@ public class Fingerprinting {
 													,MACAddress.parse("00:14:BF:B1:97:81")
 													,MACAddress.parse("00:16:B6:B7:5D:8C")
 													,MACAddress.parse("00:11:88:28:5E:E0")};
+	
+	private static final GeoPosition[] apPos = {GeoPosition.parse("-23.626,-18.596,0")
+													,GeoPosition.parse("-10.702,-18.596,0")
+													,GeoPosition.parse("8.596,-14.62,0")
+													,GeoPosition.parse("8.538,-9.298,0")
+													,GeoPosition.parse("-1.93,-2.749,0")
+													,GeoPosition.parse("4.035,-0.468,0")
+													,GeoPosition.parse("13.333,-2.69,0")
+													,GeoPosition.parse("21.17,-2.69,0")
+													,GeoPosition.parse("32.398,-2.69,0")
+													,GeoPosition.parse("32.573,13.86,0")
+													,GeoPosition.parse("7.135,6.023,0")};
 	
 	public void getTraces(){
 		
@@ -55,7 +67,7 @@ public class Fingerprinting {
 			
 			//Iterate the trace generated from the offline file
 			offlineTrace = tg.getOffline();			
-			onlineTrace = tg.getOnline();			
+			onlineTrace = tg.getOnline();		
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -64,7 +76,6 @@ public class Fingerprinting {
 	}
 	
 	public List<PositionTrace> getOfflineRadioMapEmpirical(){
-		
 		List<PositionTrace> data = new ArrayList<PositionTrace>();
 		for(TraceEntry entry: offlineTrace) {
 			Boolean entrySet = false;
@@ -79,11 +90,9 @@ public class Fingerprinting {
 			}
 		}
 		return data;
-		
 	}
 	
 	public List<PositionTrace> getOnlineRadioMapEmpirical(){
-		
 		List<PositionTrace> data = new ArrayList<PositionTrace>();
 		for(TraceEntry entry: onlineTrace) {
 			Boolean entrySet = false;
@@ -98,10 +107,43 @@ public class Fingerprinting {
 			}
 		}
 		return data;
-		
 	}
 	
-	public PositionTrace addSignals(PositionTrace trace, SignalStrengthSamples signals){
+	public List<PositionTrace> getOfflineRadioMapMethodBased(){
+		List<PositionTrace> data = new ArrayList<PositionTrace>();		
+		for(TraceEntry entry: offlineTrace) {
+			Boolean entrySet = false;
+			for(int i=0;i<data.size();i++){
+				if(data.get(i).getPosition().equals(entry.getGeoPosition())){
+					entrySet=true;
+				}
+			}
+			if(!entrySet) {
+				data.add(new PositionTrace(entry.getGeoPosition(),signals));
+			}
+		}
+		for(int i=0; i<data.size(); i++)
+			addSignalsMB(data.get(i));
+		return data;
+	}
+	
+	public List<PositionTrace> getOnlineRadioMapMethodBased() {
+		List<PositionTrace> data = new ArrayList<PositionTrace>();
+		for(TraceEntry entry: onlineTrace) {
+			Boolean entrySet = false;
+			for(int i=0;i<data.size();i++){
+				if(data.get(i).getPosition().equals(entry.getGeoPosition()))
+					entrySet=true;
+			}
+			if(!entrySet) 
+				data.add(new PositionTrace(entry.getGeoPosition(),signals));
+		}
+		for(int i=0; i<data.size(); i++)
+			addSignalsMB(data.get(i));
+		return data;
+	}
+	
+	public PositionTrace addSignals(PositionTrace trace, SignalStrengthSamples signals) {
 		for (int i=0;i<aPoints.length;i++){
 			if(signals.containsKey(aPoints[i])){
 				if(trace.getSignals()[i]==0.0)
@@ -113,5 +155,12 @@ public class Fingerprinting {
 		return trace;
 	}
 	
-	
+	public void addSignalsMB(PositionTrace trace) {
+		double p_d=0, d=0;
+		for(int i=0; i<apPos.length; i++) {
+			d = apPos[i].distance(trace.getPosition());
+			p_d = -33.77-10*3.415*Math.log10(d);
+			trace.setSignal(p_d, i);
+		}
+	}
 }
