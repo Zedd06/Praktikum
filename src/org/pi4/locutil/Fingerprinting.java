@@ -123,7 +123,7 @@ public class Fingerprinting {
 			}
 		}
 		for(int i=0; i<data.size(); i++)
-			addSignalsMB(data.get(i));
+			data.get(i).setSignals(addSignalsMB(data.get(i)));
 		return data;
 	}
 	
@@ -139,7 +139,15 @@ public class Fingerprinting {
 				data.add(new PositionTrace(entry.getGeoPosition(),signals));
 		}
 		for(int i=0; i<data.size(); i++)
-			addSignalsMB(data.get(i));
+			data.get(i).setSignals(addSignalsMB(data.get(i)));
+		for(int n=0; n<data.size();n++) {
+			System.out.print((n+1)+". FP: Geoposition=" + data.get(n).getPosition() + ", Signale=");
+			for(int j=0; j<apPos.length;j++) {
+				System.out.print(data.get(n).getSignals()[j]+" ");
+			}
+			System.out.println("\n###############");
+		}
+		
 		return data;
 	}
 	
@@ -155,12 +163,18 @@ public class Fingerprinting {
 		return trace;
 	}
 	
-	public void addSignalsMB(PositionTrace trace) {
-		double p_d=0, d=0;
+	public double[] addSignalsMB(PositionTrace trace) {
+		double  d=0;
+		double[] p_d= new double[apPos.length];
 		for(int i=0; i<apPos.length; i++) {
 			d = apPos[i].distance(trace.getPosition());
-			p_d = -33.77-10*3.415*Math.log10(d);
-			trace.setSignal(p_d, i);
+			p_d[i] = -33.77-10*3.415*Math.log10(d);
 		}
+		return p_d;
 	}
+	
+	public void filter(List<PositionTrace> pt) {
+		
+	}
+	
 }
