@@ -17,7 +17,7 @@ public class Fingerprinting {
 	private List<TraceEntry> apTraces;
 	private static final int offlineSize = 25;
 	private static final int onlineSize = 5;
-	private static final double signalStrength = -80.0;
+	private static final double signalStrength = -100.0;
 	private static final double[] signals = new double[]{signalStrength,signalStrength,signalStrength,signalStrength,signalStrength,signalStrength,signalStrength,signalStrength,signalStrength,signalStrength,signalStrength};
 	private static final MACAddress[] aPoints = {MACAddress.parse("00:14:BF:B1:7C:54")
 													,MACAddress.parse("00:16:B6:B7:5D:8F")
@@ -86,9 +86,9 @@ public class Fingerprinting {
 				}
 			}
 			if(!entrySet){
-				data.add(addSignals(new PositionTrace(entry.getGeoPosition(),signals), entry.getSignalStrengthSamples()));
+				data.add(addSignals(new PositionTrace(entry.getGeoPosition(),signals.clone()), entry.getSignalStrengthSamples()));
 			}
-		}
+		}	
 		return data;
 	}
 	
@@ -103,7 +103,7 @@ public class Fingerprinting {
 				}
 			}
 			if(!entrySet){
-				data.add(addSignals(new PositionTrace(entry.getGeoPosition(),signals), entry.getSignalStrengthSamples()));
+				data.add(addSignals(new PositionTrace(entry.getGeoPosition(),signals.clone()), entry.getSignalStrengthSamples()));
 			}
 		}
 		return data;
@@ -154,7 +154,7 @@ public class Fingerprinting {
 	public PositionTrace addSignals(PositionTrace trace, SignalStrengthSamples signals) {
 		for (int i=0;i<aPoints.length;i++){
 			if(signals.containsKey(aPoints[i])){
-				if(trace.getSignals()[i]==0.0)
+				if(trace.getSignals()[i]==signalStrength)
 					trace.setSignal(signals.getAverageSignalStrength(aPoints[i]),i);
 				else
 					trace.setSignal((trace.getSignals()[i]+signals.getAverageSignalStrength(aPoints[i]))/2, i);
