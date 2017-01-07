@@ -1,0 +1,24 @@
+Empirical Methode: 
+
+Durchlauf mit K= 1---Median: 2.6950000000000003
+Durchlauf mit K= 2---Median: 2.37
+Durchlauf mit K= 3---Median: 2.26
+Durchlauf mit K= 4---Median: 2.09
+Durchlauf mit K= 5---Median: 2.005
+Durchlauf mit K= 6---Median: 1.975
+Durchlauf mit K= 7---Median: 2.0700000000000003
+Durchlauf mit K= 8---Median: 1.98
+
+
+
+
+RadioMapMethodBased:
+
+Durchlauf mit K= 1---Median: 0.61
+Durchlauf mit K= 2---Median: 0.38
+Durchlauf mit K= 3---Median: 0.47
+Durchlauf mit K= 4---Median: 0.52
+Durchlauf mit K= 5---Median: 0.495
+Durchlauf mit K= 6---Median: 0.505
+Durchlauf mit K= 7---Median: 0.6
+Durchlauf mit K= 8---Median: 0.66
